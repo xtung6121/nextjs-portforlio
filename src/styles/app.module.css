@@ -1,0 +1,21 @@
+.red {
+    color: red;
+    border: 1px solid red;
+}
+
+.footer {
+    color: red;
+}
+
+.footer-css {
+    background-color: bisque;
+    align-items: center;
+}
+
+.footer-title {
+    align-items: center;
+}
+
+.footer-description {
+    list-style: none;
+}

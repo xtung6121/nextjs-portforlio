@@ -1,39 +1,14 @@
 "use client"
 
-import Link from 'next/link'
-import AppTable from './components/app.table';
-import useSWR from "swr";
+import BoardContent from "./pages/BoardContent/BoardContent"
+import LayoutContent from "./pages/LayoutContent/LayoutContent"
+
+
 export default function Home() {
-
-  const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-  const { data, error, isLoading } = useSWR(
-    "http://localhost:8000/blogs",
-    fetcher, {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  }
-  );
-
-  if (!data) {
-    return <>....Loading</>
-  }
   return (
-    <div>
-      <ul>
-        <li>
-          <Link className='nav-link' href={'/facebook'}>Facebook</Link>
-        </li>
-        <li>
-          <Link className='nav-link' href={'/instagram'}>instagram</Link>
-        </li>
-        <li>
-          <Link className='nav-link' href={'/linkin'}>LinkIn</Link>
-        </li>
-      </ul>
-
-      <AppTable blogs={data} />
+    <div style={{ fontFamily: "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Oxygen,Ubuntu,Cantarell,'Helvetica Neue',sans-serif" }}>
+      <BoardContent />
+      <LayoutContent />
     </div >
   )
 }

@@ -2,66 +2,73 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { mutate } from "swr"
+
 interface IProps {
-    showModalCreate: boolean;
-    setShowModalCreate: (value: boolean) => void;
+    blog: IBlog | null;
+    setBlog: (value: IBlog | null) => void;
+    showModalEdit: boolean;
+    setShowModalEdit: (value: boolean) => void;
 }
 
-const CreateModal = (props: IProps) => {
-
-    const { showModalCreate, setShowModalCreate } = props;
+const EditModal = (props: IProps) => {
+    const [id, setId] = useState<Number>(0);
+    const { showModalEdit, setShowModalEdit, blog, setBlog } = props;
     const [title, setTitle] = useState<string>("");
     const [author, setAuthor] = useState<string>("");
     const [content, setContent] = useState<string>("");
 
+    useEffect(() => {
+        if (blog && blog.id) {
+            setId(blog.id)
+            setTitle(blog.title)
+            setAuthor(blog.author)
+            setContent(blog.content)
+        }
+    }, [blog])
+
+
     const handleSubmit = () => {
         if (!title) {
-            toast.error("title is not empty");
+            toast.error("update is not empty!")
             return
         }
         if (!author) {
-            toast.error("author is not empty");
+            toast.error("update is not empty!")
             return
         }
         if (!content) {
-            toast.error("content is not empty");
+            toast.error("update is not empty!")
             return
         }
-        fetch("http://localhost:8000/blogs",
-            {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: "POST",
-                body: JSON.stringify({ title, author, content })
-            })
+        fetch(`http://localhost:8000/blogs/${id}`, {
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, author, content })
+        })
             .then(res => res.json())
             .then(res => {
                 if (res) {
-                    toast.success('Create new blog succeed!');
-                    handleCloseModal();
-                    mutate("http://localhost:8000/blogs");
+                    toast.success("changed success!")
+                    mutate("http://localhost:8000/blogs")
+                    handleCloseModal()
                 }
-            })
+            }
+            )
     }
     const handleCloseModal = () => {
-        setTitle("");
-        setAuthor("");
-        setContent("");
-        setShowModalCreate(false);
+        setShowModalEdit(false);
+
     }
-
-
-
-
     return (
         <div>
             <Modal
-                show={showModalCreate}
+                show={showModalEdit}
                 onHide={(() => {
                     handleCloseModal()
                 })}
@@ -70,12 +77,12 @@ const CreateModal = (props: IProps) => {
                 size='lg'
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Add new a blog</Modal.Title>
+                    <Modal.Title>Edit blog</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-3">
-                            <Form.Label>Create Title</Form.Label>
+                            <Form.Label>Update Title</Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder=""
@@ -109,11 +116,11 @@ const CreateModal = (props: IProps) => {
                     <Button variant="primary"
                         onClick={() => {
                             handleSubmit()
-                        }}>Save</Button>
+                        }}>Update</Button>
                 </Modal.Footer>
             </Modal>
         </div>
     )
 }
 
-export default CreateModal;
+export default EditModal;
